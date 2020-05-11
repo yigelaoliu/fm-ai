@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import machine_name, admin_name, STATE_STYLE %}
+
+{% if request.endpoint == 'main.machines' %}
+    {% set title_text = '我的机器' %}
+{% elif request.endpoint == 'super.machines' %}
+    {% set title_text = '全部机器' %}
+{% elif request.endpoint == 'super.admin_machines' %}
+    {% set title_text = admin_name(a) + '(aid_' + a.id|string + ')' + '的机器' %}
+{% endif %}
+{% block title %}{{ title_text }}{% endblock %}
+{% block nav_title %}{{ title_text }}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">机器列表
+                            {% if current_user.is_super() %}
+                                <small>(<a href="{{ url_for('super.new_machine') }}">添加机器</a>)</small>
+                            {% endif %}
+                        </h4>
+                    </div>
+                    <div class="content table-responsive table-full-width">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>机器ID</th>
+                                <th>名称</th>
+                                <th>状况</th>
+                                {% if current_user.is_super() %}
+                                    <th>商家</th>
+                                {% endif %}
+                                <th>单价</th>
+                                <th>总收入</th>
+                                <th>经度</th>
+                                <th>纬度</th>
+                                <th>城市</th>
+                                <th>启用时间</th>
+                                {% if current_user.is_super() %}
+                                    <th>管理</th>
+                                {% endif %}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for m in m_list %}
+                                <tr>
+                                    <td>mid_{{ m.id }}</td>
+                                    <td><a href="{{ url_for('main.machine', m_id=m.id) }}">{{ machine_name(m) }}</a>(mid_{{ m.id }})</td>
+                                    <td class="{{ STATE_STYLE[m.state]['CLASS'] }}">{{ STATE_STYLE[m.state]['TEXT'] }}</td>
+                                    {% if current_user.is_super() %}
+                                        <td><a href="{{ url_for('super.admin', a_id=m.admin.id) }}">
+                                            {{ admin_name(m.admin) }}</a>(aid_{{ m.admin_id }})
+                                        </td>
+                                    {% endif %}
+                                    <td>{{ m.fee / 100 }} 元</td>
+                                    <td>{{ m.income / 100 }} 元</td>
+                                    <td>{{ m.longitude }}</td>
+                                    <td>{{ m.latitude }}</td>
+                                    <td>石家庄</td>
+                                    <td>{{ m.timestamp }}</td>
+                                    {% if current_user.is_super() %}
+                                        <td><a href="{{ url_for('super.edit_machine', m_id=m.id) }}">设置机器</a></td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% macro nav_item(endpoint, text, icon) %}
+    <li{% if request.endpoint == endpoint %} class="active"{% endif %}>
+        <a href="{{ url_for(endpoint) }}">
+            <i class="{{ icon }}"></i>
+            <p>{{ text }}</p>
+        </a>
+    </li>
+{% endmacro %}
+
+
+{%- macro machine_name(m) -%}
+    {% if m.name != None and m.name != 'None' %}{{ m.name }}{% else %}洗车机{{ m.id }}号{% endif %}
+{%- endmacro -%}
+
+
+{%- macro admin_name(a) -%}
+    {% if a.name != None and a.name != 'None' %}{{ a.name }}{% else %}商家{{ a.id }}号{% endif %}
+{%- endmacro -%}
+
+
+{%- macro user_name(u) -%}
+    用户{{ u.id }}号
+{%- endmacro -%}
+
+
+{# 洗车机的*运营*状态：1)正常运营；-1)暂停服务；-2)即将开业；-3)隐藏机器。非status*运行*状态。 #}
+{% set STATE = {
+    'NORMAL': config['STATE_NORMAL'],
+    'STOP': config['STATE_STOP'],
+    'WAIT': config['STATE_WAIT'],
+    'HIDE': config['STATE_HIDE']
+} %}
+
+{% set STATE_STYLE = {
+    STATE['NORMAL']: {'TEXT': '正常运营', 'CLASS': 'text-success'},
+    STATE['STOP']: {'TEXT': '暂停服务', 'CLASS': 'text-danger'},
+    STATE['WAIT']: {'TEXT': '即将开业', 'CLASS': 'text-warning'},
+    STATE['HIDE']: {'TEXT': '隐藏机器', 'CLASS': 'text-primary'}
+} %}
+
+
+{% macro m_qrcode_png(m) %}
+    {% if m.has_qrcode() %}
+        <img src="{{ url_for('static', filename='m_qrcode/mid_'+(m.id|string)+'.png') }}">
+    {% else %}
+        <img src="{{ url_for('static', filename='m_qrcode/not-found.png') }}">
+    {% endif %}
+{% endmacro %}

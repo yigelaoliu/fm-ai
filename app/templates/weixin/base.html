@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0" name="viewport">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="费曼智能">
+    <meta name="application-name" content="费曼智能">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/1.1.3/weui.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='weixin/weixin.css') }}">
+    {% block css %}{% endblock %}
+    <title>{% block title %}费曼智能{% endblock %}</title>
+</head>
+
+<body>
+{# WeUI页面层级 #}
+<div id="popout">{% block popout %}{% endblock %}</div>
+<div id="mask">{% block mask %}{% endblock %}</div>
+<div id="navigation">
+    {% block navigation %}
+        {% include 'weixin/_weui_navigation.html' %}
+    {% endblock %}
+</div>
+<div id="content">{% block content %}{% endblock %}</div>
+
+{% block js %}
+    <script type="text/javascript" src="https://res.wx.qq.com/open/libs/weuijs/1.1.4/weui.min.js"></script>
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+{% endblock %}
+</body>
+
+</html>

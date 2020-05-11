@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import machine_name, admin_name, user_name %}
+
+{% if request.endpoint == 'main.orders' %}
+    {% set title_text = '我的订单' %}
+{% elif request.endpoint == 'super.orders' %}
+    {% set title_text = '全部订单' %}
+{% elif request.endpoint == 'super.admin_orders' %}
+    {% set title_text = admin_name(a) + '(aid_' + a.id|string + ')' + '的订单' %}
+{% elif request.endpoint == 'super.user_orders' %}
+    {% set title_text = user_name(u) + '(uid_' + u.id|string + ')' + '的订单' %}
+{% elif request.endpoint == 'main.machine_orders' %}
+    {% set title_text = machine_name(m) + '(mid_' +  m.id|string + ')' + '的订单' %}
+{% endif %}
+{% block title %}{{ title_text }}{% endblock %}
+{% block nav_title %}{{ title_text }}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">订单列表</h4><br>
+                        {% if request.endpoint == 'super.orders' %}
+                            <form action="{{ url_for('super.orders') }}">
+                                <input type="text" name="transaction_id" value="{{ request.args.get('transaction_id') or '' }}">
+                                <input type="submit" value="搜索">
+                            </form>
+                        {% endif %}
+                    </div>
+                    <div class="content table-responsive table-full-width">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>订单ID</th>
+                                <th>机器</th>
+                                <th>用户</th>
+                                {% if current_user.is_super() %}
+                                    <th>openid</th>
+                                    <th>微信订单号</th>
+                                    <th>商家</th>
+                                {% endif %}
+                                <th>订单状态</th>
+                                <th>金额</th>
+                                <th>时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for o in o_list %}
+                                <tr>
+                                    <td>oid_{{ o.id }}</td>
+                                    <td><a href="{{ url_for('main.machine', m_id=o.machine_id) }}">
+                                        {{ machine_name(o.machine) }}</a>(mid_{{ o.machine_id }})</td>
+                                    {% if current_user.is_super() %}
+                                        <td><a href="{{ url_for('super.user_orders', u_id=o.user_id) }}">
+                                            {{ user_name(o.user) }}</a>(uid_{{ o.user_id }})
+                                        </td>
+                                    {% else %}
+                                        <td>uid_{{ o.user_id }}</td>
+                                    {% endif %}
+                                    {% if current_user.is_super() %}
+                                        <td>{{ o.user.openid }}</td>
+                                        <td>{{ o.transaction_id }}</td>
+                                        <td><a href="{{ url_for('super.admin', a_id=o.machine.admin.id) }}">
+                                            {{ admin_name(o.machine.admin) }}</a>(aid_{{ o.machine.admin_id }})
+                                        </td>
+                                    {% endif %}
+                                    {% if o.status == 1 %}
+                                        {% set status_text = '成功' %}
+                                        {% set color_class = 'text-success' %}
+                                    {% else %}
+                                        {% set status_text = '失败' %}
+                                        {% set color_class = 'text-danger' %}
+                                    {% endif %}
+                                    <td class="{{ color_class }}">{{ status_text }}</td>
+                                    <td>{{ o.fee / 100 }} 元</td>
+                                    <td>{{ o.timestamp }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

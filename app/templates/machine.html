@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import machine_name, machine_state, admin_name, m_qrcode_png, STATE_STYLE %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        #qq-map {
+            min-width: 500px;
+            min-height: 800px;
+        }
+    </style>
+    <!--  QQ Maps Plugin    -->
+    <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp"></script>
+    <script>
+        var init = function () {
+            var center = new qq.maps.LatLng({{ m.latitude }}, {{ m.longitude }});
+            var map = new qq.maps.Map(document.getElementById('qq-map'), {
+                center: center,
+                zoom: 16
+            });
+            var marker = new qq.maps.Marker({
+                position: center,
+                map: map
+            });
+
+        };
+    </script>
+{% endblock %}
+
+{% block title %}{{ machine_name(m) }}(mid_{{ m.id }}){% endblock %}
+{% block nav_title %}{{ machine_name(m) }}(mid_{{ m.id }}){% endblock %}
+{% block body_action %}  onload="init()"{% endblock %}  # body开始渲染时触发js的init()初始化。
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-5">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">{{ machine_name(m) }}(mid_{{ m.id }})
+                            {% if current_user.is_super() %}
+                                <small>(<a href="{{ url_for('super.edit_machine', m_id=m.id) }}">管理</a>)</small>
+                            {% endif %}
+                        </h4>
+                    </div>
+                    <div class="content">
+                        <p>运营状况：<span class="{{ STATE_STYLE[m.state]['CLASS'] }}">{{ STATE_STYLE[m.state]['TEXT'] }}</span></p>
+                        <p>经度：{{ m.longitude }}</p>
+                        <p>纬度：{{ m.latitude }}</p>
+                        <p>拥有者：{{ admin_name(m.admin) }}(aid_{{ m.admin.id }})</p>
+                        <p>电话：{{ m.admin.phone_num }}</p>
+                        <p>单价：{{ m.fee / 100 }} 元</p>
+                        <p>总收入：<a href="{{ url_for('main.machine_orders', m_id=m.id) }}">{{ m.income / 100 }} 元</a></p>
+                        <p>机器概况：{{ m.info }}</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">微信支付
+                            <small>(<a href="{{ url_for('main.machine_qrcode', m_id=m.id) }}">二维码</a>)</small>
+                        </h4>
+                    </div>
+                    <div class="content">
+                        <p>
+                            {{ m_qrcode_png(m) }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7 col-md-7">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">{{ machine_name(m) }}(mid_{{ m.id }})地图</h4>
+                    </div>
+                    <div class="content">
+                        <div id="qq-map"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'weixin/base.html' %}
+
+{% block title %}绑定手机{% endblock %}
+
+{% block css %}
+    <style>
+        .page__bd {
+            padding: 0 15px;
+        }
+    </style>
+{% endblock %}
+
+{# 发送验证码用AJAX点击链接。无需跳转。 #}
+{% block content %}
+    <div class="page__bd">
+        <br><br>
+        <form action="" method="post">
+            {{ form.csrf_token }}
+            <div class="weui-cells weui-cells_form">
+                <div class="weui-cell weui-cell_vcode">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">手机号</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" id="phone_num" type="tel" placeholder="请输入手机号" id="phone_num" name="phone_num">
+                    </div>
+                    <div class="weui-cell__ft">
+                        <button class="weui-vcode-btn" id="get-code">获取验证码</button>
+                    </div>
+                </div>
+                <div class="weui-cell weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">验证码</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="number" placeholder="请输入手机收到的验证码" id="sms_code" name="sms_code">
+                    </div>
+                </div>
+            </div>
+            <br><br>
+            <button type="submit" class="weui-btn weui-btn_plain-primary">验证手机</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block js %}
+    {{ super() }}
+    <script type="text/javascript" src="{{ url_for('static', filename='assets/js/jquery-1.10.2.js') }}"></script>
+    <script>
+        $('#get-code').on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var phoneNum = $("#phone_num").val();
+            // alert(phoneNum);
+            var dataString = "openid={{ openid }}&phone_num=" + phoneNum;
+
+            $.ajax
+            ({
+                type: "GET",
+                url: "{{ url_for('weixin.send_sms') }}",
+                data: dataString,
+                success: function () {
+                    alert("已发送至: " + phoneNum);
+                }
+            });
+        });
+    </script>
+{% endblock %}

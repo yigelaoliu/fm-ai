@@ -1,0 +1,43 @@
+html, body {
+    height: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    background-color: #fafafa;
+    -webkit-overflow-scrolling: touch;
+}
+
+.weui-tab {
+    position: static;
+}
+
+.text-muted {
+    color: #DDDDDD;
+}
+
+.text-primary, .text-primary:hover {
+    color: #427C89;
+}
+
+.text-info, .text-info:hover {
+    color: #3091B2;
+}
+
+.text-success, .text-success:hover {
+    color: #42A084;
+}
+
+.text-warning, .text-warning:hover {
+    color: #BB992F;
+}
+
+.text-danger, .text-danger:hover {
+    color: #B33C12;
+}

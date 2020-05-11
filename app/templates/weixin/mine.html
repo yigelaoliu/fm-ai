@@ -1,0 +1,18 @@
+{% extends 'weixin/base.html' %}
+
+{% block title %}个人页面{% endblock %}
+
+{% block js %}
+    {{ super() }}
+    <script>
+        {% if request.args.get('code') == None %}
+            window.location.href = '{{ authorize_url|safe }}';
+        {% endif %}
+    </script>
+{% endblock %}
+
+{% block content %}
+    {% if request.args.get('code') != None %}
+        第{{ u.id }}号用户的手机号是{{ u.phone_num }}
+    {% endif %}
+{% endblock %}

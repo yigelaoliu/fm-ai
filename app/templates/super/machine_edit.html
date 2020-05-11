@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import machine_name, admin_name, STATE %}
+
+{% block title %}洗车机设置{% endblock %}
+{% block nav_title %}洗车机设置{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            {% if request.endpoint == 'super.edit_machine' %}
+                <div class="col-lg-3 col-md-5">
+                    <div class="card card-user">
+                        <div class="image">
+                            <img src="{{ url_for('static', filename='assets/img/background.jpg') }}"/>
+                        </div>
+                        <div class="content">
+                            <div class="author">
+                                <img class="avatar border-white"
+                                     src="{{ url_for('static', filename='assets/img/machine.png') }}"/>
+                                <h4 class="title">
+                                    <a href="{{ url_for('main.machine', m_id=m.id) }}">
+                                        {{ machine_name(m) }}
+                                    </a>(mid_{{ m.id }})</h4>
+                            </div>
+                            <p class="description text-center">
+                                拥有者：<a href="{{ url_for('super.admin', a_id=m.admin.id) }}">{{ admin_name(m.admin) }}</a>
+                            </p>
+                            <p class="description text-center">
+                                机器收入：<a href="{{ url_for('main.machine_orders', m_id=m.id) }}">{{ m.income / 100 }} 元</a>
+                            </p>
+                            <p class="description text-center">
+                                {{ m.info }}
+                            </p>
+                            <br>
+                            <div class="text-center">
+                                {% if m.state != STATE['HIDE'] %}
+                                    <a href="{{ url_for('super.hide_machine', m_id=m.id) }}"
+                                       class="btn btn-danger btn-fill">隐藏机器</a>
+                                {% elif m.state == STATE['HIDE'] %}
+                                    <a href="{{ url_for('super.show_machine', m_id=m.id) }}"
+                                       class="btn btn-success btn-fill">显示机器</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="col-lg-3 col-md-5">
+                <div class="card">
+                    <div class="header">
+                        {% if request.endpoint == 'super.edit_machine' %}
+                            <h4 class="title">设置机器</h4>
+                        {% elif request.endpoint == 'super.new_machine' %}
+                            <h4 class="title">新建机器</h4>
+                        {% endif %}
+                    </div>
+                    <div class="content">
+                        <form action="" method="post">
+                            {{ form.csrf_token }}
+                            <div class="form-group">
+                                {{ form.name.label }}
+                                {{ form.name(class_='form-control border-input', value=machine_name(m)) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.state.label }}
+                                {% macro is_checked(state) %}
+                                    {% if state == m.state %}checked{% endif %}
+                                {% endmacro %}
+                                <div>
+                                    <label class="radio-inline">
+                                        <input value=1 type="radio" name="state" {{ is_checked(STATE['NORMAL']) }}>正常运营</label>
+                                    <label class="radio-inline">
+                                        <input value=-1 type="radio" name="state" {{ is_checked(STATE['STOP']) }}>暂停服务</label>
+                                    <label class="radio-inline">
+                                        <input value=-2 type="radio" name="state" {{ is_checked(STATE['WAIT']) }}>即将开业</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                {{ form.fee.label }}
+                                {{ form.fee(class_='form-control border-input', value=(m.fee or config['DEFAULT_WASH_FEE'])) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.longitude.label }}
+                                {{ form.longitude(class_='form-control border-input', value=(m.longitude or 114.26)) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.latitude.label }}
+                                {{ form.latitude(class_='form-control border-input', value=(m.latitude or 38.03)) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.info.label }}
+                                <textarea rows="3" class="form-control border-input" id="info"
+                                          name="info">{{ m.info }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                {{ form.admin_id.label }}
+                                {{ form.admin_id(class_='form-control border-input', value=m.admin_id) }}
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-info btn-fill btn-wd">更新</button>
+                            </div>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-5">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">地图经纬度坐标拾取器</h4>
+                    </div>
+                    <div class="content">
+                        <p>
+                            <a href="https://lbs.amap.com/console/show/picker" target="_blank">高德地图</a>
+                            <a href="http://api.map.baidu.com/lbsapi/getpoint/index.html" target="_blank">百度地图</a>
+                            <a href="https://lbs.qq.com/tool/getpoint/" target="_blank">腾讯地图</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

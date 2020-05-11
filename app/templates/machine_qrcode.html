@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import machine_name, m_qrcode_png %}
+
+{% block title %}{{ machine_name(m) }}(mid_{{ m.id }})的二维码{% endblock %}
+{% block nav_title %}{{ machine_name(m) }}(mid_{{ m.id }})的二维码{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-5">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">微信支付链接</h4>
+                    </div>
+                    <div class="content">
+                        <textarea rows="5" class="form-control border-input" id="info" name="info">
+                            {{- qrcode_s -}}
+                        </textarea>
+                        <br>
+                        <p>可使用<a href="https://cli.im/">二维码生成器</a>或其他工具制作二维码</p>
+                    </div>
+                </div>
+                {% if current_user.is_super() %}
+                    <div class="card">
+                        <div class="header">
+                            <h4 class="title">上传二维码</h4>
+                        </div>
+                        <div class="content">
+                            <p><b>注意：图片格式只支持png格式。</b></p>
+                            <form method="post" enctype="multipart/form-data" class="text-center">
+                                <input type="file" name="file"><br>
+                                <input type="submit" class="btn btn-info btn-fill btn-wd" value="上传">
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="header">
+                            <h4 class="title"><a href="{{ url_for('main.machine', m_id=m.id) }}">{{ machine_name(m) }}</a>(mid_{{ m.id }})的二维码</h4>
+                        </div>
+                        <div class="content">
+                            <p>{{ m_qrcode_png(m) }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

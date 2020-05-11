@@ -1,0 +1,29 @@
+{% extends 'weixin/base.html' %}
+
+{% block title %}消费订单{% endblock %}
+
+{% block js %}
+    {{ super() }}
+    <script>
+        {% if request.args.get('code') == None %}
+            window.location.href = '{{ authorize_url|safe }}';
+        {% endif %}
+    </script>
+{% endblock %}
+
+{% block content %}
+    {% if request.args.get('code') != None %}
+        <div class="weui-panel__bd">
+            {% for o in o_list %}
+                <div class="weui-media-box weui-media-box_text">
+                    <h4 class="weui-media-box__title">订单{{ o.id }}</h4>
+                    <p class="weui-media-box__desc">{{ o.transaction_id }}</p>
+                    <ul class="weui-media-box__info">
+                        <li class="weui-media-box__info__meta">时间</li>
+                        <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{ o.timestamp }}</li>
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

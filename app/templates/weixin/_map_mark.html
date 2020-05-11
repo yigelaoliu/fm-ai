@@ -1,0 +1,29 @@
+{% from '_macros.html' import machine_name, STATE, STATE_STYLE %}
+
+{% macro mark(m) %}
+    // 定义弹出信息窗体。
+    var {{ 'mark_' + m.id|string }}_info = new AMap.InfoWindow({
+        isCustom: true,  // 使用自定义窗体
+        content: createInfoWindow("{{ machine_name(m) }} <span class='{{ STATE_STYLE[m.state]['CLASS'] }}'>{{ STATE_STYLE[m.state]['TEXT'] }}　　　</span>",  // title
+                                  "{{ m.info or '洗车机资料有待完善' }}"),  // content
+        offset: new AMap.Pixel(10, -90)
+    });
+    var {{ 'mark_' + m.id|string }} = new AMap.Marker({
+        position: [{{ m.longitude }}, {{ m.latitude }}],
+        icon:
+        {%- if m.state == STATE['NORMAL'] -%}
+            "{{ url_for('static', filename='weixin/image/mark-normal.png') }}",
+        {%- elif m.state == STATE['STOP'] -%}
+            "{{ url_for('static', filename='weixin/image/mark-stop.png') }}",
+        {%- elif m.state == STATE['WAIT'] -%}
+            "{{ url_for('static', filename='weixin/image/mark-wait.png') }}",
+        {%- endif %}
+        offset: new AMap.Pixel(-30, -66)
+    });
+    map.add({{ 'mark_' + m.id|string }});
+    // 鼠标点击marker弹出自定义的信息窗体。
+    AMap.event.addListener({{ 'mark_' + m.id|string }}, 'click', function () {
+        {{ 'mark_' + m.id|string }}_info.open(map, {{ 'mark_' + m.id|string }}.getPosition());
+{#        infoWindow.open(map, {{ 'mark_' + m.id|string }}.getPosition());#}
+    });
+{% endmacro %}

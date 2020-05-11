@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}数据概览{% endblock %}
+{% block nav_title %}数据概览{% endblock %}
+
+{% block custom_css %}
+    {{ super() }}
+    <link href="{{ url_for('static', filename='assets/css/chartist.min.css') }}" rel="stylesheet">
+    <style>
+        .ct-series-a .ct-line,
+        .ct-series-a .ct-point {
+            stroke: #68B3C8;
+        }
+    </style>
+{% endblock %}
+
+{% block custom_js %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='assets/js/chartist.min.js') }}"></script>
+    <script type="text/javascript">
+        var data = {
+            labels: ['14天前', '13', '12', '11', '10', '9', '8', '7', '6', '5', '4', '3', '前天', '昨天', '今天'],
+            series: [
+                {{ a.latest_orders_count_list }}
+            ]
+        };
+        var options = {
+            lineSmooth: false,
+        }
+        new Chartist.Line('.ct-chart', data, options);
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-sm-6">
+                <div class="card">
+                    <div class="content">
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <div class="icon-big icon-warning text-center">
+                                    <i class="ti-harddrives"></i>
+                                </div>
+                            </div>
+                            <div class="col-xs-7">
+                                <div class="numbers">
+                                    <p>机器数</p>
+                                    <a href="{{ url_for('main.machines') }}">{{ a.machines.count() }} 台</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+                <div class="card">
+                    <div class="content">
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <div class="icon-big icon-success text-center">
+                                    <i class="ti-wallet"></i>
+                                </div>
+                            </div>
+                            <div class="col-xs-7">
+                                <div class="numbers">
+                                    <p>总收入</p>
+                                    <a href="{{ url_for('main.orders') }}">{{ a.income / 100 }} 元</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+                <div class="card">
+                    <div class="content">
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <div class="icon-big icon-danger text-center">
+                                    <i class="ti-pulse"></i>
+                                </div>
+                            </div>
+                            <div class="col-xs-7">
+                                <div class="numbers">
+                                    <p>故障数</p>
+                                    0 次
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card ">
+                    <div class="header">
+                        <h4 class="title">最近15天的订单</h4>
+                    </div>
+                    <div class="content">
+                        <div id="chartActivity" class="ct-chart">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

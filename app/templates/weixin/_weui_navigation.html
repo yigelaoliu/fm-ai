@@ -1,0 +1,30 @@
+<div class="weui-tab">
+    <div class="weui-tab__panel">
+
+    </div>
+    <div class="weui-tabbar">
+        <a href="{{ url_for('weixin.orders') }}" class="weui-tabbar__item">
+            <img src="{{ url_for('static', filename='weixin/image/icon_nav_article.png') }}">
+            <p class="weui-tabbar__label">账单</p>
+        </a>
+        {% if request.endpoint == 'weixin.index' %}
+            <a href="javascript:;" class="weui-tabbar__item" id="scanQRCode">
+        {% else %}
+            <a href="{{ url_for('weixin.index') }}" class="weui-tabbar__item" id="scanQRCode">
+        {% endif %}
+            <img src="{{ url_for('static', filename='weixin/image/icon_nav_button.png') }}">
+            <p class="weui-tabbar__label">扫码洗车</p>
+        </a>
+        <a href="{{ url_for('weixin.mine') }}" class="weui-tabbar__item">
+            <img src="{{ url_for('static', filename='weixin/image/icon_nav_toast.png') }}">
+            <p class="weui-tabbar__label">我的</p>
+        </a>
+    </div>
+</div>
+<script type="text/javascript" class="tabbar js_show">
+    $(function () {
+        $('.weui-tabbar__item').on('click', function () {
+            $(this).addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+        });
+    });
+</script>

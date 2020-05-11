@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}超级管理{% endblock %}
+{% block nav_title %}超级管理{% endblock %}
+
+{% block content %}
+    <div>{{ app_id }}</div>
+    <div>{{ request.endpoint }}</div>
+    <p>{{ a.phone_num }} {{ a.is_super() }}</p>
+    <a href="{{ url_for('super.all_machines') }}">全部机器</a>
+    <a href="{{ url_for('super.all_admins') }}">全部管理员</a>
+{% endblock %}

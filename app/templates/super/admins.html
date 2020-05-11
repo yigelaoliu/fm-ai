@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import admin_name %}
+
+{% block title %}全部商家{% endblock %}
+{% block nav_title %}全部商家{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">商家列表
+                            <small>(<a href="{{ url_for('super.new_admin') }}">添加商家</a>)</small>
+                        </h4>
+                    </div>
+                    <div class="content table-responsive table-full-width">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>商家ID</th>
+                                <th>姓名</th>
+                                <th>电话</th>
+                                <th>拥有机器</th>
+                                <th>总收入</th>
+                                <th>资料</th>
+                                <th>管理</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for a in a_list %}
+                                <tr>
+                                    <td>aid_{{ a.id }}</td>
+                                    <td><a href="{{ url_for('super.admin', a_id=a.id) }}">{{ admin_name(a) }}</a>(aid_{{ a.id }})</td>
+                                    <td>{{ a.phone_num }}</td>
+                                    <td><a href="{{ url_for('super.admin_machines', a_id=a.id) }}">{{ a.machines.count() }} 台</a></td>
+                                    <td><a href="{{ url_for('super.admin_orders', a_id=a.id) }}">{{ a.income / 100 }} 元</a></td>
+                                    <td>{{ a.info }}</td>
+                                    <td><a href="{{ url_for('super.admin', a_id=a.id) }}">编辑资料</a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

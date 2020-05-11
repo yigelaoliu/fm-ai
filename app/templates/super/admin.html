@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import admin_name %}
+
+{% block title %}商家资料{% endblock %}
+{% block nav_title %}商家资料{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            {% if request.endpoint == 'super.admin' %}
+                <div class="col-lg-3 col-md-5">
+                    <div class="card card-user">
+                        <div class="image">
+                            <img src="{{ url_for('static', filename='assets/img/background.jpg') }}"/>
+                        </div>
+                        <div class="content">
+                            <div class="author">
+                                <img class="avatar border-white"
+                                     src="{{ url_for('static', filename='assets/img/user.png') }}"/>
+                                <h4 class="title">{{ admin_name(a) }}(aid_{{ a.id }})<br/>
+                                    <small>{{ a.phone_num }}</small>
+                                </h4>
+                            </div>
+                            <p class="description text-center">
+                                拥有机器：<a href="{{ url_for('super.admin_machines', a_id=a.id) }}">{{ a.machines.count() }} 台</a>
+                            </p>
+                            <p class="description text-center">
+                                总收入：<a href="{{ url_for('super.admin_orders', a_id=a.id) }}">{{ a.income / 100 }} 元</a>
+                            </p>
+                            <p class="description text-center">
+                                {{ a.info }}
+                            </p>
+                            <br><br>
+                            <div class="reset-pw text-center">
+                                <button type="submit" class="btn btn-info btn-fill btn-wd"
+                                        onclick="if (confirm('确定重置该商家密码？')) { window.open('{{ url_for('super.reset_admin_pw', a_id=a.id) }}'); }">
+                                    重置密码
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="col-lg-3 col-md-5">
+                <div class="card">
+                    <div class="header">
+                        {% if request.endpoint == 'super.admin' %}
+                            <h4 class="title">编辑资料</h4>
+                        {% elif request.endpoint == 'super.new_admin' %}
+                            <h4 class="title">新建商家</h4>
+                        {% endif %}
+                    </div>
+                    <div class="content">
+                        <form action="" method="post">
+                            {{ form.csrf_token }}
+                            <div class="form-group">
+                                {{ form.name.label }}
+                                {{ form.name(class_='form-control border-input', value=admin_name(a)) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.phone_num.label }}
+                                {{ form.phone_num(class_='form-control border-input', value=a.phone_num) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.info.label }}
+                                <textarea rows="3" class="form-control border-input"
+                                          id="info" name="info">{{ a.info }}</textarea>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-info btn-fill btn-wd">更新</button>
+                            </div>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
